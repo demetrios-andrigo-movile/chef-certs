@@ -1,0 +1,16 @@
+{
+  "name": "alexandrezia/chef-certs",
+  "description": "Manages Opscode Chef x509 certificates, RSA/DSA priv/pub keys, openssh pub keys",
+  "keywords": ["chef", "x509", "RSA", "DSA", "openssh"],
+    "authors": [
+        {
+            "name": "Alexandre Roberto Zia",
+            "email": "alexandre@zia.com.br"
+        }
+    ],
+  "license" : "MIT",
+  "require": {
+    "jenssegers/chef": "dev-master",
+    "phpseclib/phpseclib": "0.3.*@dev"
+  }
+}

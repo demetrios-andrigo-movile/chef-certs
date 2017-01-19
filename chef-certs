@@ -1,0 +1,47 @@
+#!/bin/bash
+
+full_path=$(which "${0}")
+
+if [ -h "${full_path}" ]
+then
+  basename=$(readlink "${full_path}")
+else
+  basename="${full_path}"
+fi
+
+WORKDIR="$(dirname "${basename}")"
+
+(
+  cd ${WORKDIR}
+
+  if [ -f update_check ]
+  then
+    case $(uname -s) in
+      Darwin) CREATED=$(stat -f "%m" -t "%s" update_check) ;;
+       Linux) CREATED=$(stat -c "%Y" update_check) ;;
+    esac
+    NOW=$(date "+%s")
+    DIFF=$[ ${NOW} - ${CREATED} ]
+    if [ ${DIFF} -lt 86400 ]
+    then
+      exit
+    fi
+  fi
+  :> update_check
+
+  echo -n "Checking for updates ..."
+  git fetch origin >/dev/null 2>&1
+  echo "OK"
+
+  git status | grep 'Your branch is behind .origin/master.' > /dev/null 2>&1
+  if [ ${?} -eq 0 ]
+  then
+    read -p "There are updates available, update now? [Y|N]" UPDATE
+    if [ ${UPDATE} == 'y' ] || [ ${UPDATE} == 'Y' ]
+    then
+     git merge origin/master
+    fi
+  fi
+)
+
+${WORKDIR}/php ${WORKDIR}/chef-certs.php ${@}

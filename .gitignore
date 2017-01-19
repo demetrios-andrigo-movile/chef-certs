@@ -1,0 +1,12 @@
+/vendor/
+**/.DS_Store
+/.project
+/.settings
+/composer.lock
+/.buildpath
+/debug.txt
+/html/
+/composer
+/update_check
+/.idea
+/*.iml
