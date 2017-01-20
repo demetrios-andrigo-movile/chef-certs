@@ -1778,15 +1778,9 @@ function get_display_name($subject)
  */
 function display_x509_certificate_details($certificate)
 {
-  print "\n";
-  $inc = 0;
-
-  print "Data bag            => ".COLOR_BLUE.DATABAG_X509.COLOR_RESET."\n";
-  print "Data bag item       => ".COLOR_BLUE.$certificate->x509_certificate_data['id'].COLOR_RESET."\n\n";
-
   print "Certificate         => ".COLOR_BRIGHT."{$certificate->x509_certificate_info['subject']['CN']}".COLOR_RESET."\n";
-  $inc++;
 
+  $inc = 1;
   $missing_ca = FALSE;
   if($certificate->self_signed === FALSE && sizeof($certificate->certification_chain) > 0)
   {
@@ -1899,18 +1893,16 @@ function display_vault_users_and_nodes($certificate)
     print COLOR_BRIGHT.$nodes.COLOR_RESET."\n";
   }
 
-  $tag_query = preg_replace('/tags\:|\\\|_cert$/', '', $SEARCH_QUERY);
-
-  print "\nTag your servers using the following commands before use this certificate in a chef recipe:\n\n    ".
-    COLOR_BRIGHT."knife tag create SERVER_NAME.DOMAIN \"";
-  if (is_array($tag_query))
-    print implode(' OR ', $tag_query);
-  else
-    print $tag_query;
-  print COLOR_RESET."\"\n";
-
-  print "    ".COLOR_BRIGHT."knife vault refresh ".DATABAG_X509." {$certificate->x509_certificate_data['private_key_id']}";
-  print COLOR_RESET."\n";
+//  $tag_query = preg_replace('/tags\:|\\\|_cert$/', '', $SEARCH_QUERY);
+//  print "\nTag your servers using the following commands before use this certificate in a chef recipe:\n\n    ".
+//    COLOR_BRIGHT."knife tag create SERVER_NAME.DOMAIN \"";
+//  if (is_array($tag_query))
+//    print implode(' OR ', $tag_query);
+//  else
+//    print $tag_query;
+//  print COLOR_RESET."\"\n";
+//  print "    ".COLOR_BRIGHT."knife vault refresh ".DATABAG_X509." {$certificate->x509_certificate_data['private_key_id']}";
+//  print COLOR_RESET."\n";
 }
 
 /**
@@ -2041,7 +2033,7 @@ function print_databag_items_x509($items, $header = TRUE)
   {
     $key = sprintf("%  3d", $key);
     $cn = $current_item['cert']->raw_data->cn;
-    $item_name = $current_item['cert']->raw_data->id;
+    $item_name = preg_replace("/_cert/", "", $current_item['cert']->raw_data->id);
     print_r("  {$key} => ".COLOR_BRIGHT."{$cn}".COLOR_RESET." (".COLOR_BLUE.$item_name.COLOR_RESET.")\n" );
   }
 
@@ -2614,10 +2606,34 @@ function show_stored_certificate_details($cert)
     {
       print COLOR_YELLOW."Warning:".COLOR_RESET." Certification chain has issues. ".COLOR_YELLOW."Re-import certificate to fix it.".COLOR_RESET."\n";
     }
+    system('clear');
+    print "-------------------------------------------\nCertificate information:\n\n";
     display_x509_certificate_details($certificate);
   }
 
+  print "\n-------------------------------------------\nChef information:\n";
+
   display_vault_users_and_nodes($certificate);
+
+  print "\n-------------------------------------------\nNodes permission:\n\n";
+  $tag_query = preg_replace('/tags\:|\\\|_cert$/', '', $SEARCH_QUERY);
+//  print "Tag your servers using the following commands before use this certificate in a chef recipe:\n\n    ";
+  print COLOR_BRIGHT."knife tag create SERVER_NAME.DOMAIN \"";
+  if (is_array($tag_query))
+    print implode(' OR ', $tag_query);
+  else
+    print $tag_query;
+  print COLOR_RESET."\"\n";
+  print COLOR_BRIGHT."knife vault refresh ".DATABAG_X509." {$certificate->x509_certificate_data['private_key_id']}";
+  print COLOR_RESET."\n";
+
+
+  print "\n-------------------------------------------\nRecipe usage:\n\n";
+  print COLOR_BRIGHT;
+  print "chef_certs_x509 \"";
+  print preg_replace("/_cert/", "", $certificate->x509_certificate_data['id']);
+  print "\" do\n...\nend\n\n";
+  print COLOR_RESET;
 
   print "\n";
 }
