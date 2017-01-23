@@ -33,16 +33,13 @@ doc:
 	doxygen temp.doxyfile
 	\rm -f temp.doxyfile
 
-install: install-chef-client install-composer install-composer-packages install-chef-certs
+install: install-composer install-composer-packages install-chef-certs
 
 update: update-git install-composer-packages install-chef-certs
 	@echo
 	
 update-git:
 	git pull
-
-install-chef-client:
-	chef-solo -v >/dev/null 2>&1 || curl -L https://www.opscode.com/chef/install.sh | sudo bash
 
 install-composer:
 	./php composer >/dev/null 2>&1 || curl -sS https://getcomposer.org/installer | ./php -- --filename=composer --install-dir=.
