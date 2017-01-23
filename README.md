@@ -126,4 +126,5 @@ Roadmap
 * Mover certificados expirados para databag de certificados expirados
    - somente após o mesmo ser renovado
 * Colocar CAs em databag separado
+* Suportar formato PFX
 
