@@ -54,6 +54,32 @@ Optional: Link chef-certs to your PATH
     # or
     sudo ln -sf chef-certs.php /usr/local/bin/chef-certs
 
+####Fedora installation
+
+Install dependencies
+
+    sudo yum install -y git php-cli php-common php-mcrypt php-json
+
+Install ChefDK
+
+    cd /tmp
+    curl -O https://packages.chef.io/files/stable/chefdk/1.1.16/el/7/chefdk-1.1.16-1.el7.x86_64.rpm
+    sudo rpm -ivh chefdk-1.1.16-1.el7.x86_64.rpm
+    \rm -f chefdk-1.1.16-1.el7.x86_64.rpm
+
+Configure knife to access yout chef server
+
+    knife configure
+
+Clone and install chef-certs
+
+    cd /usr/local/src/
+    sudo mkdir chef-certs
+    sudo chown ${USER} chef-certs
+    git clone https://github.com/alexandrezia/chef-certs.git chef-certs
+    cd /usr/local/src/chef-certs
+    make install
+
 Usage
 -----
 
