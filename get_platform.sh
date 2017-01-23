@@ -9,6 +9,9 @@ case ${OS} in
   Darwin)
     version=$(sw_vers -productVersion)
     case $version in
+      10.12*)
+        OS_NAME="sierra"
+      ;;
       10.11*)
         OS_NAME="elcapitan"
       ;;
